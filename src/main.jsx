@@ -11,7 +11,7 @@ axios.defaults.withCredentials = true;
 
 ReactDOM.createRoot(document.getElementById('root')).render(
    <React.StrictMode>
-      <BrowserRouter basename="/React">
+      <BrowserRouter basename="/index.html">
          <AuthContextProvider>
             <App />
          </AuthContextProvider>
