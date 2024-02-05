@@ -7,5 +7,6 @@ export default defineConfig({
   plugins: [react(), basicSsl()],
   server: {
     host: true,
+    port: process.env.PORT,
   }
 })
