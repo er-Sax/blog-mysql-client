@@ -1,0 +1,84 @@
+.create-container {
+   margin: auto;
+   width: 80%;
+   display: grid;
+   grid-template-columns: 3fr 1fr;
+   gap: 2rem;
+
+   .content {
+      display: flex;
+      gap: 1rem;
+      flex-direction: column;
+      .ql-editor {
+         min-height: 50vh;
+      }
+      .title {
+         width: 100%;
+         line-height: 1.42;
+         outline: none;
+         padding: 4px 12px;
+         border: 1px solid var(--lighttext-col);
+      }
+   }
+   .menu {
+      display: flex;
+      justify-content: space-between;
+      .options {
+         width: 100%;
+
+         .cat {
+            margin: 0.5rem 0;
+            position: relative;
+            display: flex;
+            gap: 1rem;
+         }
+
+      }
+      .buttons {
+         width: 100%;
+         .file-container {
+            width: 100%;
+            .file-temp {
+               width: 100%;
+               display: flex;
+               flex-direction: column;
+               justify-content: center;
+               p {
+                  font-size: 0.9em;
+               }
+               .file-clear {
+                  display: flex;
+                  justify-content: end;
+                  padding: 0.5rem 0.5rem 0 0;
+               }
+            }
+         }
+      }
+      button {
+         background: none;
+         outline: none;
+         border: 1px solid black;
+         padding: 0.5rem 1rem;
+         width: 100%;
+         cursor: pointer;
+         margin: 0.5rem 0;
+      }
+   }
+}
+
+@media (max-width: 656px) {
+   .create-container {
+      grid-template-columns: unset;
+      margin: 0 2rem;
+      .content {
+         margin-top: 1rem;
+      }
+
+      .menu {
+         .buttons {
+            width: 100%;
+            margin-bottom: 2rem;
+         }
+      }
+   }
+}

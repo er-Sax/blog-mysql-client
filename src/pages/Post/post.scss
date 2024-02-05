@@ -1,0 +1,77 @@
+@import '../../styles/mixins.scss';
+
+.post-container {
+   display: grid;
+   grid-template-columns: 2fr 1fr;
+
+   .content {
+      height: 100%;
+      animation: slideDown 1.5s;
+      display: flex;
+      justify-content: flex-start;
+      flex-direction: column;
+      width: 75%;
+      margin: auto;
+      padding: 1rem 0;
+      
+      .edit {
+         display: flex;
+         justify-content: flex-end;
+         gap: 1rem;
+         margin: 0 1rem 3rem 0;
+      }
+      .user {
+         padding: 1rem 1rem 1rem 0;
+      }
+      .img-container {
+         .post-img {
+            width: 100%;
+            position: relative;
+            height: 66vh;
+            object-fit: cover;
+         }
+      }
+
+      h1 {
+         font-family: 'Bacasime Antique', serif;
+         margin: 1rem 0 0 0;
+         font-size: 3rem;
+         font-weight: 500;
+      }
+      .desc-container {
+         margin-top: 1.5rem;
+         font-size: 0.9rem;
+         letter-spacing: 1px;
+         text-align: justify;
+         width: 100%;
+         word-wrap: break-word;
+         margin-bottom: 2rem;
+      }
+   }
+}
+
+@media (max-width: 776px) {
+   .post-container {
+      grid-template-columns: unset;
+
+      .content {
+         .user {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+            margin: 0.5rem 0;
+
+            .share {
+               display: flex;
+               width: 100%;
+
+               justify-content: flex-end;
+            }
+         }
+      }
+      .menu {
+         padding: 0 4rem 4rem;
+      }
+   }
+}

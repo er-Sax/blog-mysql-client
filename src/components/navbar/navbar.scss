@@ -1,0 +1,136 @@
+@import '../../styles/mixins.scss';
+
+.navbar {
+   display: flex;
+   flex-direction: column;
+   width: 100%;
+
+   .navbar-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+
+      border-bottom: 1px solid var(--accent-col);
+      padding: 1.5rem 7rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+
+      .logo {
+         font-size: 1.2rem;
+         font-weight: 800;
+         letter-spacing: 10px;
+      }
+
+      .navbar-links {
+         @include flexCenter();
+         gap: 2rem;
+         .links-close {
+            display: none;
+         }
+      }
+
+      .navbar-left {
+         @include flexCenter();
+         flex-direction: row;
+         gap: 2rem;
+      }
+      .navbar-right {
+         @include flexCenter();
+         gap: 2rem;
+
+         .i-loggedin {
+            font-size: 1.2rem;
+            font-weight: lighter;
+         }
+
+         .login-link {
+            .ri-user-3-line:before {
+               font-weight: 400;
+               margin: 0 0.5rem 0 0;
+            }
+            padding: 0.5rem 1rem;
+            border: 1px solid black;
+         }
+      }
+   }
+   .menu-mobile {
+      display: none;
+      pointer-events: none;
+      z-index: -99;
+   }
+}
+
+@media screen and (max-width: 767px) {
+   .navbar {
+      .navbar-content {
+         padding: 1.5rem 2rem;
+
+         .navbar-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            z-index: 5;
+            flex-direction: column;
+            position: fixed;
+            right: 0;
+            top: 0;
+            height: 100vh;
+            background: white;
+            width: 50%;
+            z-index: 9;
+            text-transform: uppercase;
+            box-shadow: -3px 0px 12px 0px rgba(0, 0, 0, 0.05);
+            //to animate the menu:
+            transform: translateX(100%);
+            transition: transform 0.5s ease-in-out;
+
+            &.open {
+               transform: translateX(0);
+            }
+
+            .links-close {
+               display: block;
+               font-size: 1.2em;
+               margin-bottom: 0.5rem;
+            }
+            a {
+               color: black;
+               font-size: 1rem;
+               text-align: center;
+               padding: 0.75em 2em;
+               display: block;
+               width: 100%;
+               transition: 0.2s all ease-in-out;
+
+               &:hover {
+                  background: rgb(240, 240, 240);
+                  transition: 0.5s all ease-in-out;
+               }
+            }
+         }
+      }
+
+      .menu-mobile {
+         display: block;
+         pointer-events: all;
+         z-index: 99;
+         i {
+            font-size: 1.3rem;
+         }
+      }
+   }
+}
+
+@media screen and (max-width: 450px) {
+   .navbar {
+      .navbar-content {
+
+         .navbar-links {
+
+            width: 66%;
+         }
+      }
+   }
+}
