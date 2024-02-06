@@ -1,6 +1,6 @@
 import {useState} from 'react';
 import {Routes, Route, Outlet} from 'react-router-dom';
-import {Create, Home, Login, Post, Register} from './pages';
+import {Create, Home, Login, Post, Register, User, Options} from './pages';
 
 function App() {
    return (
@@ -25,6 +25,14 @@ function App() {
             <Route
                path='/register'
                element={<Register />}
+            />
+            <Route
+               path='/user/:id'
+               element={<User />}
+            />
+            <Route
+               path='/options'
+               element={<Options />}
             />
          </Routes>
       </div>

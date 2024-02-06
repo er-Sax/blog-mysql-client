@@ -5,6 +5,7 @@ import axios from 'axios';
 
 const Menu = ({cat, postId}) => {
    const [posts, setPosts] = useState([]);
+   const [animate, setAnimate] = useState(false);
 
    useEffect(() => {
       const fetchPosts = async () => {
@@ -20,10 +21,23 @@ const Menu = ({cat, postId}) => {
          }
       };
       fetchPosts();
+      setAnimate(true);
+
+      const animationDuration = 1500;
+      const timeoutId = setTimeout(() => {
+         setAnimate(false);
+      }, animationDuration);
+      return () => clearTimeout(timeoutId);
    }, [cat, postId]);
 
+   const handleLinkClick = () => {
+      // Scroll back to the top of the page
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+   };
+
    return (
-      <div className='menu'>
+      <div className={`menu ${animate ? 'animate' : ''}`}>
          <h1>Other posts you may like</h1>
          {posts.slice(0, 4).map((post) => (
             <div
@@ -39,7 +53,9 @@ const Menu = ({cat, postId}) => {
                   <h2>{post?.title}</h2>
                   <Link
                      className='link'
-                     to={`/post/${post.id}`}>
+                     to={`/post/${post.id}`}
+                     onClick={handleLinkClick}>
+                     {' '}
                      <div className='btn-container'>
                         <button>Read More</button>
                      </div>

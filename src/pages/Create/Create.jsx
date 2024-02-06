@@ -2,42 +2,26 @@ import React, {useState, useRef} from 'react';
 import {categories} from '../../data/index.js';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import {AlertPopup, Navbar} from '../../components/index.js';
+import {AlertPopup, Navbar, FileInput} from '../../components/index.js';
 import './create.scss';
 import axios from 'axios';
 import {useLocation, useNavigate} from 'react-router-dom';
 import moment from 'moment';
+import {useAuth} from '../../context/AuthContext.jsx';
 
 const Create = () => {
    //states//
    const state = useLocation().state;
    const [value, setValue] = useState(state?.desc || '');
    const [title, setTitle] = useState(state?.title || '');
-   const [cat, setCat] = useState(state?.cat || '');
+   const [cat, setCat] = useState(state?.cat || categories[0].linkname);
    const [file, setFile] = useState(null);
-   const [fileName, setFileName] = useState('');
 
-   const fileInputRef = useRef(null);
+   const {authToken} = useAuth();
+
    const navigate = useNavigate();
 
    const [openPopup, setOpenPopup] = useState(false);
-
-   //event handlers//
-   const handleFileUploadClick = () => {
-      if (fileInputRef.current) {
-         fileInputRef.current.click();
-      }
-   };
-   const handleSetFile = () => {
-      const selectedFile = fileInputRef.current.files[0];
-      setFile(selectedFile);
-      setFileName(selectedFile.name);
-   };
-
-   const handleClearFile = () => {
-      setFile(null);
-      setFileName('');
-   };
 
    const upload = async () => {
       try {
@@ -62,20 +46,36 @@ const Create = () => {
          try {
             state
                ? //if editing
-                 await axios.put(`/posts/${state.id}`, {
-                    title,
-                    desc: value,
-                    cat,
-                    img: file ? image : `${state?.img}`,
-                 })
+                 await axios.put(
+                    `/posts/${state.id}`,
+                    {
+                       title,
+                       desc: value,
+                       cat,
+                       img: file ? image : `${state?.img}`,
+                    },
+                    {
+                       headers: {
+                          Authorization: `Bearer ${authToken}`, // Include token in request headers
+                       },
+                    }
+                 )
                : //if posting
-                 await axios.post(`/posts/`, {
-                    title,
-                    desc: value,
-                    cat,
-                    img: file ? image : '',
-                    date: moment(Date.now()).format('YYYY-MM-DD HH:mm:ss'),
-                 });
+                 await axios.post(
+                    `/posts/`,
+                    {
+                       title,
+                       desc: value,
+                       cat,
+                       img: file ? image : '',
+                       date: moment(Date.now()).format('YYYY-MM-DD HH:mm:ss'),
+                    },
+                    {
+                       headers: {
+                          Authorization: `Bearer ${authToken}`, // Include token in request headers
+                       },
+                    }
+                 );
             navigate('/');
          } catch (err) {
             console.log(err);
@@ -131,40 +131,11 @@ const Create = () => {
                   </div>
                </div>
                <div className='buttons'>
-                  <div className='file-container'>
-                     <input
-                        style={{display: 'none'}}
-                        type='file'
-                        id='file'
-                        ref={fileInputRef}
-                        onChange={handleSetFile}
-                     />
-
-                     <button
-                        className='file'
-                        onClick={handleFileUploadClick}>
-                        {state ? 'Upload New Image' : 'Upload Image'}
-                     </button>
-                     <div className='file-temp'>
-                        {file ? (
-                           <>
-                              <p> Selected file: {fileName} </p>
-                           </>
-                        ) : (
-                           <>
-                              <p>No file selected</p>
-                           </>
-                        )}
-
-                        {file && (
-                           <div className='file-clear'>
-                              <i
-                                 onClick={handleClearFile}
-                                 className='clear-file ri-delete-bin-6-line'></i>
-                           </div>
-                        )}
-                     </div>
-                  </div>
+                  <FileInput
+                     file={file}
+                     setFile={setFile}
+                     state={state}
+                  />
                   <button onClick={handlePublish}>Publish</button>
                </div>
             </div>

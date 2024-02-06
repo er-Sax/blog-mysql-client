@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Navbar, Menu, UserBar, AlertPopup, Loading} from '../../components';
+import {Navbar, Menu, UserBar, AlertPopup, Loading, EmptyPageMsg} from '../../components';
 import {Link, useLocation, useNavigate} from 'react-router-dom';
 import './post.scss';
 import {useAuth} from '../../context/AuthContext';
@@ -12,9 +12,10 @@ const Post = () => {
    const postId = location.pathname.split('/')[2];
 
    const [loading, setLoading] = useState(true);
+   const [animate, setAnimate] = useState(false);
 
    const navigate = useNavigate();
-   const {currentUser} = useAuth();
+   const {currentUser, authToken} = useAuth();
 
    const [showAlert, setShowAlert] = useState(false);
 
@@ -29,6 +30,16 @@ const Post = () => {
       };
       fetchData();
       setLoading(false);
+      setAnimate(true);
+   }, [postId]);
+
+   // Reset animate state after the animation completes
+   useEffect(() => {
+      const timeoutId = setTimeout(() => {
+         setAnimate(false);
+      }, 800);
+
+      return () => clearTimeout(timeoutId);
    }, [postId]);
 
    const handleCancel = () => {
@@ -42,7 +53,11 @@ const Post = () => {
    //event handlers//
    const handleDelete = async () => {
       try {
-         await axios.delete(`/posts/${postId}`);
+         await axios.delete(`/posts/${postId}`, {
+            headers: {
+               Authorization: `Bearer ${authToken}`,
+            },
+         });
          navigate('/');
       } catch (err) {
          console.log(err);
@@ -61,49 +76,61 @@ const Post = () => {
          ) : (
             <>
                <Navbar></Navbar>
-               <div className='post-container'>
-                  <div className='content'>
-                     <h1>{post.title}</h1>
 
-                     <UserBar data={post}></UserBar>
+               {post ? (
+                  <>
+                     <div className='post-container'>
+                        <div className={`content ${animate ? 'fade-in' : ''}`}>
+                           <h1>{post.title}</h1>
 
-                     {post.img && (
-                        <div className='img-container'>
-                           <img
-                              className='post-img'
-                              src={`/uploads/${post?.img}`}
-                              alt=''
-                           />
+                           <UserBar data={post}></UserBar>
+
+                           {post.img && (
+                              <div className='img-container'>
+                                 <img
+                                    className='post-img'
+                                    src={`/uploads/${post?.img}`}
+                                    alt=''
+                                 />
+                              </div>
+                           )}
+                           <p className='desc-container'>{getText(post?.desc)}</p>
+                           {currentUser?.username === post.username ? (
+                              <>
+                                 <div className='edit'>
+                                    <Link
+                                       to={`/create?edit=2`}
+                                       state={post}>
+                                       <i className='ri-edit-line'></i>
+                                    </Link>
+                                    <i
+                                       className='ri-delete-bin-6-line'
+                                       onClick={() => setShowAlert(true)}></i>
+                                 </div>
+                              </>
+                           ) : (
+                              <></>
+                           )}
                         </div>
+                        <Menu
+                           cat={post?.cat}
+                           postId={post.id}
+                        />
+                     </div>
+                     {showAlert && (
+                        <AlertPopup
+                           message='Confirm delete?'
+                           onConfirm={handleConfirm}
+                           onCancel={handleCancel}
+                           showCancel={true}
+                        />
                      )}
-                     <p className='desc-container'>{getText(post?.desc)}</p>
-                     {currentUser?.username === post.username ? (
-                        <>
-                           <div className='edit'>
-                              <Link
-                                 to={`/create?edit=2`}
-                                 state={post}>
-                                 <i className='ri-edit-line'></i>
-                              </Link>
-                              <i
-                                 className='ri-delete-bin-6-line'
-                                 onClick={() => setShowAlert(true)}></i>
-                           </div>
-                        </>
-                     ) : (
-                        <></>
-                     )}
-                  </div>
-                  <Menu cat={post?.cat} postId={post.id}/>
-                  {showAlert && (
-                     <AlertPopup
-                        message='Confirm delete?'
-                        onConfirm={handleConfirm}
-                        onCancel={handleCancel}
-                        showCancel={true}
-                     />
-                  )}
-               </div>
+                  </>
+               ) : (
+                  <>
+                     <EmptyPageMsg message={'Post not found'} />
+                  </>
+               )}
             </>
          )}
       </>

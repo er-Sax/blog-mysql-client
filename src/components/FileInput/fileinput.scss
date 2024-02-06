@@ -1,0 +1,24 @@
+@import '../../styles/mixins.scss';
+.file-container {
+   width: 100%;
+   display: flex;
+   // flex-direction: column;
+   gap: 10px;
+   .file-temp {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      p {
+         font-size: 0.9em;
+      }
+      .file-clear {
+         display: flex;
+         justify-content: end;
+         padding: 0.5rem 0.5rem 0 0;
+      }
+   }
+   button {
+      @include buttonStyle();
+   }
+}

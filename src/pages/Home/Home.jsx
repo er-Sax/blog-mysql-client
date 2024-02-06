@@ -1,9 +1,10 @@
 import React, {useEffect, useState} from 'react';
-import {Footer, Loading, Navbar, UserBar} from '../../components';
+import {EmptyPageMsg, Footer, Loading, Navbar, UserBar} from '../../components';
 // import {posts} from '../../data/index.js';
 import {Link, useLocation} from 'react-router-dom';
 import './home.scss';
 import axios from 'axios';
+import {getText} from '../../utils/getText';
 
 const Home = () => {
    const [posts, setPosts] = useState([]);
@@ -15,7 +16,7 @@ const Home = () => {
    const postsPerPage = 5;
    const startIndex = page * postsPerPage;
    const endIndex = startIndex + postsPerPage;
-   const maxPage = Math.floor(posts.length / postsPerPage);
+   const maxPage = Math.floor(posts.length / postsPerPage) - 1;
 
    const category = useLocation().search;
 
@@ -39,7 +40,7 @@ const Home = () => {
       setLoading(true);
 
       // After the animation duration, reset the animate state
-      const animationDuration = 500; // 1 second
+      const animationDuration = 500;
       const timeoutId = setTimeout(() => {
          setLoading(false);
          setAnimate(false);
@@ -47,21 +48,7 @@ const Home = () => {
 
       // Clean up the timeout when the component unmounts or when the page changes again
       return () => clearTimeout(timeoutId);
-   }, [page]);
-
-   const getText = (html, maxWords) => {
-      const doc = new DOMParser().parseFromString(html, 'text/html');
-      const textContent = doc.body.textContent.trim(); // Remove leading/trailing whitespace
-      const words = textContent.split(/\s+/); // Split into words
-
-      // const maxWords = 100;
-      let truncatedText = words.slice(0, maxWords).join(' ');
-
-      if (words.length > maxWords) {
-         truncatedText += '...';
-      }
-      return truncatedText;
-   };
+   }, [page, category]);
 
    const renderPosts = () => {
       return (
@@ -81,15 +68,16 @@ const Home = () => {
                                  alt=''
                               />
                            </div>
-                           <div className='content'>
-                              <div className='text'>
-                                 {/* <h3>{post?.title}</h3> */}
-                                 <h3>{getText(post?.title, 8)}</h3>
-                                 <p className='desc'>{getText(post?.desc, 100)}</p>
-                              </div>
-                              <UserBar data={post} />
-                           </div>
                         </Link>
+                        <div className='content'>
+                           <Link to={`/post/${post.id}`}>
+                              <div className='text'>
+                                 <h3>{getText(post?.title, 7)}</h3>
+                                 <p className='desc'>{getText(post?.desc, 50)}</p>
+                              </div>
+                           </Link>
+                           <UserBar data={post} />
+                        </div>
                      </div>
                   ))}
                </div>
@@ -101,7 +89,7 @@ const Home = () => {
    return (
       <>
          <Navbar />
-         <div className='home-container'>{renderPosts()}</div>
+         {posts.length != 0 ? <div className='home-container'>{renderPosts()}</div> : <EmptyPageMsg message={'No posts found'} />}
          <Footer
             page={page}
             setPage={setPage}
