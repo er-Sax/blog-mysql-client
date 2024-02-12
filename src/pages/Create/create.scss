@@ -10,8 +10,12 @@
       display: flex;
       gap: 1rem;
       flex-direction: column;
+      width: 100%;
+      overflow: hidden;
       .ql-editor {
          min-height: 50vh;
+         overflow: hidden;
+         word-wrap: break-word;
       }
       .title {
          width: 100%;
